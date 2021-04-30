@@ -26,12 +26,16 @@ def app():
             agregarContacto()
             preguntar = False
         elif opcion == 2:
+            editarCotacto()
             preguntar = False
         elif opcion == 3:
+            verContactos()
             preguntar = False
         elif opcion == 4:
+            buscarContacto()
             preguntar = False
         elif opcion == 5:
+            eliminarContacto()
             preguntar = False
         else:
             print("Opción no válida, intente de nuevo por favor.")
@@ -72,6 +76,66 @@ def agregarContacto():
             print("Contacto creado correctamente.\n\n")
     else:
         print("El contacto ya se encuentra creado.")
+    app()
+
+def editarCotacto():
+    print("Escribe el nombre del contacto a editar.\n")
+    nombre = input("Nombre del contacto que desea editar:\n")
+
+    existe = os.path.isfile(CARPETA+nombre+EXTENSION)
+    if existe:
+        with open(CARPETA+nombre+EXTENSION,"w") as archivo:
+            nombreNuevo = input("Nuevo nombre:\n")
+            apellido = input("Nuevo apellido:\n")
+            email = input("Nuevo email:\n")
+            telefono = input("Nuevo telefono:\n")
+
+            contacto = Contacto(nombreNuevo,apellido,email,telefono)
+            archivo.write("Nombre: "+contacto.nombre+"\n")
+            archivo.write("Apellido: "+contacto.apellido+"\n")
+            archivo.write("Email: "+contacto.email+"\n")
+            archivo.write("Teléfono: "+contacto.telefono+"\n")
+
+            #renombrar el archivo con el nuevo nombre
+        os.rename(CARPETA+nombre+EXTENSION, CARPETA+nombreNuevo+EXTENSION)
+        print("Contacto editado correctamente.")
+    else:
+        print("Ese contacto no existe.")
+        app()
+
+def verContactos():
+    archivos = os.listdir(CARPETA)
+
+    #recorro el iterador pero solamente si el archivo es .txt
+    archivosTxt = [i for i in archivos if i.endswith(EXTENSION)]
+    print("\nContactos:")
+    for archivo in archivosTxt:
+        with open(CARPETA+archivo) as contacto:
+            for linea in contacto:
+                print(linea.rstrip())
+            print("\n")
+    app()
+
+def buscarContacto():
+    nombre = input("Diga el nombre del contacto que desea buscar: ")
+
+    try:
+        with open(CARPETA+nombre+EXTENSION) as contacto:
+            for linea in contacto:
+                print(linea.rstrip())
+    except IOError:
+        print("El archivo no existe")
+        print(IOError)
+    app()
+
+def eliminarContacto():
+    nombre = input("Diga el nombre del contacto que desea eliminar: ")
+
+    try: 
+        os.remove(CARPETA+nombre+EXTENSION)
+        print("Contacto eliminado correctamente.")
+    except expresion as identifier:
+        print("El contacto no existe.")
     app()
 
 app()
